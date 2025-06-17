@@ -1,6 +1,10 @@
 set -q c_star_prompt_symbol || set -g c_star_prompt_symbol ">"
 set -q c_star_date_format || set -g c_star_date_format "%Y-%m-%dT%H:%M:%S%z"
 
+function c_star_command_time --on-event fish_postexec
+  set -g c_star_command_time $CMD_DURATION'ms'
+end
+
 function c_star_datetime --on-event fish_prompt --on-event fish_postexec --on-variable c_star_date_format
   set -g c_star_datetime (date "+$c_star_date_format")
 end
@@ -24,7 +28,7 @@ function c_star_user_marker --on-event fish_prompt
     case "root"
       set -g c_star_user_marker "$(set_color red)#$(set_color normal)"
     case '*'
-      set -g c_star_user_marker "\$"
+      set -g c_star_user_marker '$'
   end
 end
 
