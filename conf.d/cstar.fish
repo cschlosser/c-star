@@ -23,11 +23,11 @@ function cstar_colorize
   set -g "$argv[1]" "$(set_color -b $bg $fg) $argv[2] $(set_color normal)"
 end
 
-function cstar_command_time --on-event fish_postexec --on-variable cstar_command_time_bg --on-variable cstar_command_time_fg
+function cstar_command_time --on-event fish_postexec
   cstar_colorize cstar_command_time $CMD_DURATION'ms' $cstar_command_time_bg $cstar_command_time_fg
 end
 
-function cstar_datetime --on-event fish_prompt --on-event fish_postexec --on-variable cstar_date_format  --on-variable cstar_datetime_bg --on-variable cstar_datetime_fg
+function cstar_datetime --on-event fish_prompt --on-event fish_postexec
   cstar_colorize cstar_datetime (date "+$cstar_date_format") $cstar_datetime_bg $cstar_datetime_fg
 end
 
@@ -63,7 +63,7 @@ function cstar_git --on-variable $_cstar_git_async
   commandline --function repaint
 end
 
-function cstar_user --on-event fish_prompt --on-variable cstar_user_bg --on-variable cstar_user_fg --on-variable SSH_CONNECTION
+function cstar_user --on-event fish_prompt
   set -l user_string (whoami)
   if test -n "$SSH_CONNECTION"
     set -f user_string "$user_string@$(hostname)"
@@ -71,7 +71,7 @@ function cstar_user --on-event fish_prompt --on-variable cstar_user_bg --on-vari
   cstar_colorize cstar_user "$user_string" $cstar_user_bg $cstar_user_fg
 end
 
-function cstar_user_marker --on-event fish_prompt  --on-variable cstar_user_marker_default_bg --on-variable cstar_user_marker_fg
+function cstar_user_marker --on-event fish_prompt
   switch (whoami)
     case "root"
       set -g cstar_user_marker_bg red
@@ -83,7 +83,7 @@ function cstar_user_marker --on-event fish_prompt  --on-variable cstar_user_mark
   cstar_colorize cstar_user_marker $char $cstar_user_marker_bg $cstar_user_marker_fg
 end
 
-function cstar_pwd --on-variable PWD --on-event fish_prompt --on-variable cstar_pwd_bg --on-variable cstar_pwd_fg
+function cstar_pwd --on-variable PWD --on-event fish_prompt
   cstar_colorize cstar_pwd (prompt_pwd) $cstar_pwd_bg $cstar_pwd_fg
 end
 
