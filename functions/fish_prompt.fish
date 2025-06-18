@@ -1,8 +1,8 @@
-function c_star_segment_divide_left
-  set -l from_var "c_star_$argv[1]"
+function cstar_segment_divide_left
+  set -l from_var "cstar_$argv[1]"
   set -l from_name "$from_var""_bg"
   set -l from $$from_name
-  set -l to_var "c_star_$argv[2]"
+  set -l to_var "cstar_$argv[2]"
   set -l to_name "$to_var""_bg"
   set -l to $$to_name
 
@@ -16,5 +16,5 @@ function c_star_segment_divide_left
 end
 
 function fish_prompt --description "The left side of the C-Star prompt"
-  echo -e "$c_star_user$c_star_host$(c_star_segment_divide_left user pwd)$c_star_pwd$(c_star_segment_divide_left pwd git)$c_star_git$(c_star_segment_divide_left git normal)\n$c_star_user_marker$(c_star_segment_divide_left user_marker normal) "
+  echo -e "$cstar_user$cstar_host$(cstar_segment_divide_left user pwd)$cstar_pwd$(cstar_segment_divide_left pwd git)$cstar_git$(cstar_segment_divide_left git normal)\n$cstar_user_marker$(cstar_segment_divide_left user_marker normal) "
 end
