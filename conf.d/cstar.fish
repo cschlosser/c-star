@@ -9,6 +9,8 @@ set -q cstar_git_bg || set -g cstar_git_bg $cstar_default_fg
 set -q cstar_git_fg || set -g cstar_git_fg $cstar_default_bg
 set -q cstar_user_marker_default_bg || set -g cstar_user_marker_default_bg $cstar_default_bg
 set -q cstar_user_marker_fg || set -g cstar_user_marker_fg $cstar_default_fg
+set -q cstar_exit_status_bg || set -g cstar_exit_status_bg red
+set -q cstar_exit_status_fg || set -g cstar_exit_status_fg white
 set -q cstar_datetime_bg || set -g cstar_datetime_bg $cstar_default_bg
 set -q cstar_datetime_fg || set -g cstar_datetime_fg $cstar_default_fg
 set -q cstar_command_time_bg || set -g cstar_command_time_bg $cstar_default_fg
@@ -29,6 +31,15 @@ end
 
 function cstar_datetime --on-event fish_prompt --on-event fish_postexec
   cstar_colorize cstar_datetime (date "+$cstar_date_format") $cstar_datetime_bg $cstar_datetime_fg
+end
+
+function cstar_exit_status --on-event fish_postexec
+  set cmd_status $status
+  if test $cmd_status -eq 0
+    set -ge cstar_exit_status
+  else
+    cstar_colorize cstar_exit_status (set_color -o)\uf00d $cstar_exit_status_bg $cstar_exit_status_fg
+  end
 end
 
 function cstar_git_query_async --on-event fish_prompt
