@@ -31,7 +31,10 @@ function cstar_datetime --on-event fish_prompt --on-event fish_postexec --on-var
   cstar_colorize cstar_datetime (date "+$cstar_date_format") $cstar_datetime_bg $cstar_datetime_fg
 end
 
-function cstar_git_query_async --on-event fish_prompt --on-variable PWD --on-variable cstar_git_bg --on-variable cstar_git_fg
+function cstar_git_query_async --on-event fish_prompt
+  if ! command -q git
+    return
+  end
   if test "$(git rev-parse --is-inside-work-tree 2> /dev/null)" != "true"
     set -Ue $_cstar_git_async
     set -Ue $_cstar_git_cached_pwd
@@ -40,7 +43,7 @@ function cstar_git_query_async --on-event fish_prompt --on-variable PWD --on-var
   set -l cached_pwd $$_cstar_git_cached_pwd
 
   if test "$PWD" != "$cached_pwd"
-    set -Ue $_cstar_git_async
+    set -U $_cstar_git_async \ue727
   end
 
   fish --private --command "set -x __fish_git_prompt_show_informative_status 1 && \
