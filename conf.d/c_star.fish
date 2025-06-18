@@ -15,6 +15,7 @@ set -q c_star_command_time_bg || set -g c_star_command_time_bg $c_star_default_f
 set -q c_star_command_time_fg || set -g c_star_command_time_fg $c_star_default_bg
 
 set -g _c_star_git_async _c_star_git_async_$fish_pid
+set -g _c_star_git_cached_pwd _c_star_git_cached_pwd_$fish_pid
 
 function c_star_colorize
   set -l bg $argv[3]
@@ -22,7 +23,6 @@ function c_star_colorize
   set -g "$argv[1]" "$(set_color -b $bg $fg) $argv[2] $(set_color normal)"
 end
 
-# TODO: Clear this after pressing enter?
 function c_star_command_time --on-event fish_postexec --on-variable c_star_command_time_bg --on-variable c_star_command_time_fg
   c_star_colorize c_star_command_time $CMD_DURATION'ms' $c_star_command_time_bg $c_star_command_time_fg
 end
@@ -32,11 +32,21 @@ function c_star_datetime --on-event fish_prompt --on-event fish_postexec --on-va
 end
 
 function c_star_git_query_async --on-event fish_prompt --on-variable PWD --on-variable c_star_git_bg --on-variable c_star_git_fg
-  # TODO cache the current git repo to minimize calls
-  set -Ue $_c_star_git_async
+  if test "$(git rev-parse --is-inside-work-tree 2> /dev/null)" != "true"
+    set -Ue $_c_star_git_async
+    set -Ue $_c_star_git_cached_pwd
+  end
+
+  set -l cached_pwd $$_c_star_git_cached_pwd
+
+  if test "$PWD" != "$cached_pwd"
+    set -Ue $_c_star_git_async
+  end
+
   fish --private --command "set -x __fish_git_prompt_show_informative_status 1 && \
       set -U $_c_star_git_async (fish_git_prompt '%s') && \
-      set -q $_c_star_git_async || set -Ue $_c_star_git_async $git_status
+      set -q $_c_star_git_async || set -Ue $_c_star_git_async $git_status && \
+      set -U $_c_star_git_cached_pwd \"$PWD\"
   "&
 end
 
@@ -76,4 +86,5 @@ end
 
 function c_star_cleanup --on-event fish_exit
     set -Ue $_c_star_git_async
+    set -Ue $_c_star_git_cached_pwd
 end
