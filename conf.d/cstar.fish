@@ -28,7 +28,57 @@ function cstar_colorize
 end
 
 function cstar_command_time --on-event fish_postexec
-  cstar_colorize cstar_command_time $CMD_DURATION'ms' $cstar_command_time_bg $cstar_command_time_fg
+  set -l dur $CMD_DURATION
+  set -l time_str ""
+
+  if test $dur -lt 1000
+    set time_str (printf "%dms" $dur)
+  else
+    set -l s (math "floor($dur / 1000)")
+    set -l ms_rem (math "$dur % 1000")
+
+    if test $s -lt 60
+      set time_str (printf "%d.%03ds" $s $ms_rem)
+    else
+      set -l m (math "floor($s / 60)")
+      set -l s_rem (math "$s % 60")
+
+      if test $m -lt 60
+        set time_str (printf "%d:%02d.%03d" $m $s_rem $ms_rem)
+      else
+        # If the program was running for more than an hour it's probably ok to
+        # calculate the totals eagerly to improve readability a bit.
+        set -l h (math "floor($m / 60)")
+        set -l m_rem (math "$m % 60")
+        set -l d (math "floor($h / 24)")
+        set -l w (math "floor($d / 7)")
+        set -l mo (math "floor($d / 30)")
+        set -l y (math "floor($d / 365)")
+
+        if test $h -lt 24
+          set time_str (printf "%d:%02d:%02d" $h $m_rem $s_rem)
+        else if test $d -lt 7
+          set -l h_rem (math "$h % 24")
+          set time_str (printf "%dd %dh" $d $h_rem)
+        else if test $w -lt 4
+          set -l d_rem (math "$d % 7")
+          set time_str (printf "%dw %dd" $w $d_rem)
+        else if test $mo -lt 12
+          set -l w_rem (math "floor(($d % 30) / 7)")
+          set time_str (printf "%dmo %dw" $mo $w_rem)
+        else
+          set -l mo_rem (math "floor(($d % 365) / 30)")
+          set time_str (printf "%dy %dmo" $y $mo_rem)
+        end
+      end
+    end
+  end
+
+  if test -z "$time_str"
+    set time_str "0ms"
+  end
+
+  cstar_colorize cstar_command_time $time_str $cstar_command_time_bg $cstar_command_time_fg
 end
 
 function cstar_datetime --on-event fish_prompt
