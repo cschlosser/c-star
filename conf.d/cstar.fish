@@ -98,7 +98,8 @@ function cstar_git_query_async --on-event fish_prompt
   if ! command -q git
     return
   end
-  if test "$(git rev-parse --is-inside-work-tree 2> /dev/null)" != "true"
+  set -l cwd_is_repo "$(git rev-parse --is-inside-work-tree 2> /dev/null)"
+  if test "$cwd_is_repo" != "true"
     set -Ue $_cstar_git_async
     set -Ue $_cstar_git_cached_pwd
   end
@@ -106,7 +107,11 @@ function cstar_git_query_async --on-event fish_prompt
   set -l cached_pwd $$_cstar_git_cached_pwd
 
   if test "$PWD" != "$cached_pwd"
-    set -U $_cstar_git_async \ue727
+    if test -n "$cwd_is_repo"
+      set -U $_cstar_git_async \ue727
+    else
+      set -Ue $_cstar_git_async
+    end
   end
 
   fish --private --command "set -x __fish_git_prompt_show_informative_status 1 && \
