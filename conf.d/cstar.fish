@@ -134,7 +134,7 @@ end
 function cstar_user --on-variable __fish_initialized
   set -l user_string (whoami)
   if test -n "$SSH_CONNECTION"
-    set -f user_string "$user_string@$(hostname)"
+    set -f user_string "$user_string@$(prompt_hostname)"
   end
   cstar_colorize cstar_user "$user_string" $cstar_user_bg $cstar_user_fg
 end
