@@ -1,8 +1,8 @@
 status is-interactive || exit
 
 set -q cstar_date_format || set -g cstar_date_format "%Y-%m-%dT%H:%M:%S%z"
-set -g cstar_default_bg 333333
-set -g cstar_default_fg a9b7c6
+set -q cstar_default_bg || set -g cstar_default_bg 333333
+set -q cstar_default_fg || set -g cstar_default_fg a9b7c6
 set -q cstar_user_bg || set -g cstar_user_bg $cstar_default_fg
 set -q cstar_user_fg || set -g cstar_user_fg $cstar_default_bg
 set -q cstar_pwd_bg || set -g cstar_pwd_bg $cstar_default_bg
